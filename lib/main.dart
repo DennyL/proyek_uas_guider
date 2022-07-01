@@ -83,7 +83,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -99,52 +98,48 @@ class _MyAppState extends State<MyApp> {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-            child: GNav(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              rippleColor: Color.fromARGB(15, 224, 224, 224),
-              hoverColor: Color.fromARGB(15, 224, 224, 224),
-              gap: 8,
-              activeColor: Color.fromARGB(225, 255, 255, 255),
-              iconSize: 24,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              duration: Duration(milliseconds: 500),
-              tabBackgroundColor: Color.fromARGB(15, 224, 224, 224),
-              color: Color(0xFFa7a7a7),
-              tabs: [
-                GButton(
-                  icon: LineIcons.home,
-                  text: 'Home',
-                ),
-                GButton(
-                  icon: LineIcons.search,
-                  text: 'Search',
-                ),
-                GButton(
-                  icon: LineIcons.star,
-                  text: 'Subs',
-                ),
-                GButton(
-                  icon: LineIcons.history,
-                  text: 'History',
-                ),
-                GButton(
-                  icon: LineIcons.user,
-                  text: 'Profile',
-                ),
-              ],
-              selectedIndex: activeIndex,
-              onTabChange: (index) {
-                if (mounted) {
+            padding: EdgeInsets.only(top: 8, bottom: 8),
+            child: Flexible(
+              fit: FlexFit.loose,
+              child: GNav(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                rippleColor: Color.fromARGB(15, 224, 224, 224),
+                hoverColor: Color.fromARGB(15, 224, 224, 224),
+                activeColor: Color.fromARGB(225, 255, 255, 255),
+                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                duration: Duration(milliseconds: 600),
+                tabBackgroundColor: Color.fromARGB(15, 224, 224, 224),
+                color: Color(0xFFa7a7a7),
+                tabs: [
+                  GButton(
+                    icon: LineIcons.home,
+                  ),
+                  GButton(
+                    icon: LineIcons.search,
+                  ),
+                  GButton(
+                    icon: LineIcons.star,
+                  ),
+                  GButton(
+                    icon: LineIcons.history,
+                  ),
+                  GButton(
+                    icon: LineIcons.user,
+                  ),
+                ],
+                selectedIndex: activeIndex,
+                onTabChange: (index) {
                   if (mounted) {
-                    setState(
-                      () {
-                        activeIndex = index;
-                      },
-                    );
+                    if (mounted) {
+                      setState(
+                        () {
+                          activeIndex = index;
+                        },
+                      );
+                    }
                   }
-                }
-              },
+                },
+              ),
             ),
           ),
         ),

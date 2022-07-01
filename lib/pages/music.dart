@@ -72,9 +72,11 @@ class _MusicState extends State<Music> {
       const Duration(milliseconds: 500),
       () {
         if (mounted) {
-          setState(() {
-            onSearch();
-          });
+          setState(
+            () {
+              onSearch();
+            },
+          );
         }
       },
     );
@@ -104,7 +106,7 @@ class _MusicState extends State<Music> {
                   padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
                   child: TextField(
                     onChanged: _onSearchChanged,
-                    autofocus: true,
+                    autofocus: false,
                     controller: searchTitle,
                     decoration: InputDecoration(
                       labelText: "Search For Songs",
