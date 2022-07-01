@@ -16,15 +16,14 @@ class Subscription extends StatefulWidget {
 }
 
 class _SubscriptionState extends State<Subscription> {
-  //subscription akan diupdate saat menekan tombol buy apda alert dialog
-  //ada 4 kondisi, pertama "" atau null, Beginner, Intermediate, Advanced
-  //digunakkan saat memanggil widget expanded dimana di if dengan menggunakkan ternary operator
   late final CollectionReference _colRefContentSubs;
   String sub_state = '';
+  List<String> cek_sub = [];
 
   @override
   void initState() {
     // TODO: implement initState
+
     getUserData();
     super.initState();
   }
@@ -33,6 +32,25 @@ class _SubscriptionState extends State<Subscription> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+  }
+
+  void filterIsiSubscriptionDatabase() {
+    String temp = "";
+    cek_sub = [];
+
+    for (int i = 1; i < sub_state.length; i++) {
+      if (sub_state[i] != ',') {
+        temp = temp + sub_state[i];
+      } else {
+        cek_sub.add(temp);
+        temp = "";
+      }
+      if (i == (sub_state.length) - 1) {
+        cek_sub.add(temp);
+      }
+    }
+
+    print("hai fungsi $cek_sub");
   }
 
   void getUserData() {
@@ -46,12 +64,9 @@ class _SubscriptionState extends State<Subscription> {
               () {
                 sub_state = docsnap.get('userSubs');
                 if (sub_state != '') {
-                  _colRefContentSubs = FirebaseFirestore.instance
-                      .collection('contents')
-                      .doc('subscriptions')
-                      .collection(
-                        sub_state,
-                      );
+                  filterIsiSubscriptionDatabase();
+                  _colRefContentSubs =
+                      FirebaseFirestore.instance.collection('contents');
                 } else {
                   sub_state = '';
                 }
@@ -66,453 +81,710 @@ class _SubscriptionState extends State<Subscription> {
   }
 
   Stream<QuerySnapshot<Object?>> Data(
-      CollectionReference<Object?> colRefContentSubs) {
+      CollectionReference<Object?> colRefContentSubs, String Path) {
     if (mounted) {
       setState(() {});
     }
-    return Database.getContent(colRefContentSubs);
+    return Database.getContent(
+        colRefContentSubs.doc('subscriptions').collection(Path));
   }
+
+  // cekTampilkanWidgetSub(string_subs) {
+  //   if (cek_sub.isEmpty) {
+  //     print('isEmpty');
+  //     return true;
+  //   } else {
+  //     for (int i = 0; i < cek_sub.length; i++) {
+  //       if (cek_sub[i] == string_subs) {
+  //         print('fals not emp');
+  //         return false;
+  //       } else {
+  //         print('fals not emp');
+  //         return true;
+  //       }
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     var width_halaman = MediaQuery.of(context).size.width;
 
     print("$sub_state hai");
+    print("$cek_sub hai cek sub");
 
     return Scaffold(
       backgroundColor: Color(0xFF171717),
-      appBar: AppBar(
-        title: Text(sub_state == "beginners"
-            ? "Beginner Class"
-            : sub_state == "intermediates"
-                ? "Intermediate Class"
-                : sub_state == "advanceds"
-                    ? "Advanced Class"
-                    : "Subscription"),
-        backgroundColor: Color(0xFF171717),
-      ),
       body: SafeArea(
-        child: Expanded(
-          child: Container(
-            padding: EdgeInsets.all(8),
-            child: Column(
-              children: [
-                sub_state == "beginners"
-                    ?
-
-                    //TODO: beginner
-                    Expanded(
-                        child: StreamBuilder<QuerySnapshot>(
-                          stream: Data(_colRefContentSubs),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
-                              return Text('Error');
-                            } else if (snapshot.hasData ||
-                                snapshot.data != null) {
-                              return Expanded(
-                                child: ListView.separated(
-                                  itemCount: snapshot.data!.docs.length,
-                                  itemBuilder: (context, index) {
-                                    DocumentSnapshot contentDs =
-                                        snapshot.data!.docs[index];
-                                    return YtDisplay(ytid: contentDs);
-                                  },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) =>
-                                          const Divider(),
-                                ),
-                              );
-                            }
-                            return Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white70,
-                                ),
+        child: PageView(
+          children: [
+            //TODO: NON SUB
+            SingleChildScrollView(
+              child: Expanded(
+                child: Container(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Visibility(
+                            visible: cek_sub.contains('beginners') ? false : true,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.green,
                               ),
-                            );
-                          },
-                        ),
-                      )
-                    : sub_state == "intermediates"
-                        ?
-
-                        //TODO: intermediate
-                        Expanded(
-                            child: StreamBuilder<QuerySnapshot>(
-                              stream: Data(_colRefContentSubs),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasError) {
-                                  return Text('Error');
-                                } else if (snapshot.hasData ||
-                                    snapshot.data != null) {
-                                  return Expanded(
-                                    child: ListView.separated(
-                                      itemCount: snapshot.data!.docs.length,
-                                      itemBuilder: (context, index) {
-                                        DocumentSnapshot contentDs =
-                                            snapshot.data!.docs[index];
-                                        return YtDisplay(ytid: contentDs);
-                                      },
-                                      separatorBuilder:
-                                          (BuildContext context, int index) =>
-                                              const Divider(),
-                                    ),
-                                  );
-                                }
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white70,
+                              width: width_halaman,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                    child: Text(
+                                      "Beginner",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
-                                );
-                              },
-                            ),
-                          )
-                        : sub_state == "advanceds"
-                            ?
-
-                            //TODO: advanced
-                            Expanded(
-                                child: StreamBuilder<QuerySnapshot>(
-                                  stream: Data(_colRefContentSubs),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasError) {
-                                      return Text('Error');
-                                    } else if (snapshot.hasData ||
-                                        snapshot.data != null) {
-                                      return Expanded(
-                                        child: ListView.separated(
-                                          itemCount: snapshot.data!.docs.length,
-                                          itemBuilder: (context, index) {
-                                            DocumentSnapshot contentDs =
-                                                snapshot.data!.docs[index];
-                                            return YtDisplay(ytid: contentDs);
-                                          },
-                                          separatorBuilder:
-                                              (BuildContext context,
-                                                      int index) =>
-                                                  const Divider(),
-                                        ),
-                                      );
-                                    }
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                          Colors.white70,
-                                        ),
+                                  Container(
+                                    width: width_halaman,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
                                       ),
-                                    );
-                                  },
-                                ),
-                              )
-                            :
-
-                            //TODO: belum subscribe
-                            Expanded(
-                                child: ListView.separated(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8, 16, 8, 16),
-                                  itemCount: 3,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      width: width_halaman,
+                                      color: Colors.white,
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0),
                                       child: Column(
                                         children: [
                                           Padding(
+                                            padding:
+                                                EdgeInsets.fromLTRB(0, 0, 0, 16),
+                                            child: Text(
+                                                "In this subcription plan, you will get beginner class video tutorials."),
+                                          ),
+                                          Padding(
                                             padding: const EdgeInsets.fromLTRB(
                                                 0, 10, 0, 10),
-                                            child: Text(
-                                              index == 0
-                                                  ? "BEGINNER"
-                                                  : index == 1
-                                                      ? "INTERMEDIATE"
-                                                      : "ADVANCED",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18,
-                                                color: Colors.white,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                          Container(
-                                            width: width_halaman,
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                bottomLeft: Radius.circular(10),
-                                                bottomRight:
-                                                    Radius.circular(10),
-                                              ),
-                                              color: Colors.white,
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(12),
-                                                  child: Text(
-                                                    index == 0
-                                                        ? "In this subcription plan, you will get beginner class video tutorials."
-                                                        : index == 1
-                                                            ? "In this subcription plan, you will get intermediate class video tutorials."
-                                                            : "In this subcription plan, you will get advanced class video tutorials.",
-                                                    style: (TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 10, 10, 10),
-                                                    )),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(12),
-                                                  child: Text(
-                                                    index == 0
-                                                        ? "\$29.99"
-                                                        : index == 1
-                                                            ? "\$39.99"
-                                                            : "\$49.99",
-                                                    style: (TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 10, 10, 10),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 16,
-                                                    )),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      RawMaterialButton(
-                                                        onPressed: () {
-                                                          showDialog<String>(
-                                                            context: context,
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                AlertDialog(
-                                                              title: Text(
-                                                                index == 0
-                                                                    ? "Beginner Subscription"
-                                                                    : index == 1
-                                                                        ? "Intermediate Subscription"
-                                                                        : "Advanced Subscription",
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                              content: Text(
-                                                                index == 0
-                                                                    ? "Would you like to buy Beginner Subscription for \$29.99 ?"
-                                                                    : index == 1
-                                                                        ? "Would you like to buy Intermediate Subscription for \$39.99 ?"
-                                                                        : "Would you like to buy Advanced Subscription for \$49.99 ?",
-                                                              ),
-                                                              actions: <Widget>[
-                                                                TextButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context,
-                                                                        'Cancel');
-                                                                  },
-                                                                  child: Text(
-                                                                      "Cancel"),
-                                                                ),
-                                                                TextButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    final userUID = FirebaseAuth
-                                                                        .instance
-                                                                        .currentUser!
-                                                                        .uid;
-
-                                                                    final userData =
-                                                                        Database.getData(
-                                                                            uid:
-                                                                                userUID);
-
-                                                                    if (index ==
-                                                                        0) {
-                                                                      userData
-                                                                          .then(
-                                                                        (DocumentSnapshot
-                                                                            docsnap) {
-                                                                          if (docsnap
-                                                                              .exists) {
-                                                                            final updateUserData =
-                                                                                userDatabase(
-                                                                              userName: docsnap.get('userName').toString(),
-                                                                              userEmail: docsnap.get('userEmail').toString(),
-                                                                              userSubs: 'beginners',
-                                                                              userPic: docsnap.get('userPic').toString(),
-                                                                            );
-                                                                            Database.updateData(user: updateUserData, uid: userUID).whenComplete(() {}).then(
-                                                                              (value) {
-                                                                                if (mounted) {
-                                                                                  if (mounted) {
-                                                                                    setState(
-                                                                                      () {
-                                                                                        getUserData();
-                                                                                      },
-                                                                                    );
-                                                                                  }
-                                                                                }
-                                                                              },
-                                                                            );
-                                                                          }
-                                                                        },
-                                                                      );
-                                                                    } else if (index ==
-                                                                        1) {
-                                                                      userData
-                                                                          .then(
-                                                                        (DocumentSnapshot
-                                                                            docsnap) {
-                                                                          if (docsnap
-                                                                              .exists) {
-                                                                            final updateUserData =
-                                                                                userDatabase(
-                                                                              userName: docsnap.get('userName').toString(),
-                                                                              userEmail: docsnap.get('userEmail').toString(),
-                                                                              userSubs: 'intermediates',
-                                                                              userPic: docsnap.get('userPic').toString(),
-                                                                            );
-                                                                            Database.updateData(user: updateUserData, uid: userUID).whenComplete(() {}).then(
-                                                                              (value) {
-                                                                                if (mounted) {
-                                                                                  setState(
-                                                                                    () {
-                                                                                      getUserData();
-                                                                                    },
-                                                                                  );
-                                                                                }
-                                                                              },
-                                                                            );
-                                                                          }
-                                                                        },
-                                                                      );
-                                                                    } else if (index ==
-                                                                        2) {
-                                                                      userData
-                                                                          .then(
-                                                                        (DocumentSnapshot
-                                                                            docsnap) {
-                                                                          if (docsnap
-                                                                              .exists) {
-                                                                            final updateUserData =
-                                                                                userDatabase(
-                                                                              userName: docsnap.get('userName').toString(),
-                                                                              userEmail: docsnap.get('userEmail').toString(),
-                                                                              userSubs: 'advanceds',
-                                                                              userPic: docsnap.get('userPic').toString(),
-                                                                            );
-                                                                            Database.updateData(user: updateUserData, uid: userUID).whenComplete(() {}).then(
-                                                                              (value) {
-                                                                                if (mounted) {
-                                                                                  setState(
-                                                                                    () {
-                                                                                      getUserData();
-                                                                                    },
-                                                                                  );
-                                                                                }
-                                                                              },
-                                                                            );
-                                                                          }
-                                                                        },
-                                                                      );
-                                                                    }
-                                                                    Navigator.pop(
-                                                                        context,
-                                                                        'Buy');
-                                                                    ScaffoldMessenger.of(
-                                                                            context)
-                                                                        .showSnackBar(
-                                                                      SnackBar(
-                                                                        content:
-                                                                            Text(
-                                                                          index == 0
-                                                                              ? "Thank you for buying Beginner Subscription (\$29.99)"
-                                                                              : index == 1
-                                                                                  ? "Thank you for buying Intermediate Subscription (\$39.99)"
-                                                                                  : "Thank you for buying Advanced Subscription (\$49.99)",
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                  child: Text(
-                                                                      "Buy"),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ).then(
-                                                            (value) {
-                                                              if (mounted) {
-                                                                setState(
-                                                                  () {
-                                                                    getUserData();
-                                                                  },
-                                                                );
-                                                              }
-                                                            },
-                                                          );
-                                                        },
-                                                        elevation: 2.0,
-                                                        fillColor: index == 0
-                                                            ? Colors.green
-                                                            : index == 1
-                                                                ? Colors
-                                                                    .lightBlueAccent
-                                                                : Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        212,
-                                                                        195,
-                                                                        42),
-                                                        child: Icon(
-                                                          Icons
-                                                              .currency_exchange_rounded,
-                                                          size: 25,
-                                                        ),
-                                                        padding: EdgeInsets.all(
-                                                            15.0),
-                                                        shape: CircleBorder(),
+                                            child: Container(
+                                              alignment: Alignment.centerRight,
+                                              child: RawMaterialButton(
+                                                onPressed: () {
+                                                  showDialog<String>(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) =>
+                                                            AlertDialog(
+                                                      title: Text(
+                                                        "Beginner Subscription",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold),
                                                       ),
-                                                    ],
-                                                  ),
+                                                      content: Text(
+                                                          "Would you like to buy Beginner Subscription for \$29.99 ?"),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(context,
+                                                                'Cancel');
+                                                          },
+                                                          child: Text("Cancel"),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            final userUID =
+                                                                FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid;
+                          
+                                                            final userData =
+                                                                Database.getData(
+                                                                    uid: userUID);
+                                                            userData.then(
+                                                              (DocumentSnapshot
+                                                                  docsnap) {
+                                                                if (docsnap
+                                                                    .exists) {
+                                                                  final updateUserData =
+                                                                      userDatabase(
+                                                                    userName: docsnap
+                                                                        .get(
+                                                                            'userName')
+                                                                        .toString(),
+                                                                    userEmail: docsnap
+                                                                        .get(
+                                                                            'userEmail')
+                                                                        .toString(),
+                                                                    userSubs:
+                                                                        '$sub_state,beginners',
+                                                                    userPic: docsnap
+                                                                        .get(
+                                                                            'userPic')
+                                                                        .toString(),
+                                                                  );
+                                                                  Database.updateData(
+                                                                          user:
+                                                                              updateUserData,
+                                                                          uid:
+                                                                              userUID)
+                                                                      .whenComplete(
+                                                                          () {})
+                                                                      .then(
+                                                                    (value) {
+                                                                      if (mounted) {
+                                                                        setState(
+                                                                          () {
+                                                                            getUserData();
+                                                                          },
+                                                                        );
+                                                                      }
+                                                                    },
+                                                                  );
+                                                                }
+                                                              },
+                                                            );
+                          
+                                                            Navigator.pop(
+                                                                context, 'Buy');
+                                                            ScaffoldMessenger.of(
+                                                                    context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                    "Thank you for buying Beginner Subscription (\$29.99)"),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Text("Buy"),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ).then(
+                                                    (value) {
+                                                      if (mounted) {
+                                                        setState(
+                                                          () {
+                                                            getUserData();
+                                                          },
+                                                        );
+                                                      }
+                                                    },
+                                                  );
+                                                },
+                                                child: Icon(
+                                                  Icons.currency_exchange_rounded,
+                                                  size: 25,
                                                 ),
-                                              ],
+                                                padding: EdgeInsets.all(15.0),
+                                                shape: CircleBorder(),
+                                                fillColor: Colors.green,
+                                              ),
                                             ),
-                                          ),
+                                          )
                                         ],
                                       ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: index == 0
-                                            ? Colors.green
-                                            : index == 1
-                                                ? Colors.lightBlueAccent
-                                                : Color.fromARGB(
-                                                    255, 212, 195, 42),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        //TODO: Intermediates
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Visibility(
+                            visible: cek_sub.contains('intermediates') ? false : true,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.lightBlueAccent,
+                              ),
+                              width: width_halaman,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                    child: Text(
+                                      "Intermediate",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.white,
                                       ),
-                                    );
-                                  },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) =>
-                                          const Divider(),
-                                ),
-                              )
-              ],
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: width_halaman,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      ),
+                                      color: Colors.white,
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                0, 0, 0, 16),
+                                            child: Text(
+                                                "In this subcription plan, you will get intermediate class video tutorials."),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 10, 0, 10),
+                                            child: Container(
+                                              alignment: Alignment.centerRight,
+                                              child: RawMaterialButton(
+                                                onPressed: () {
+                                                  showDialog<String>(
+                                                    context: context,
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        AlertDialog(
+                                                      title: Text(
+                                                        "Intermediate Subscription",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      content: Text(
+                                                          "Would you like to buy Intermediate Subscription for \$39.99 ?"),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context,
+                                                                'Cancel');
+                                                          },
+                                                          child: Text("Cancel"),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            final userUID =
+                                                                FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid;
+
+                                                            final userData =
+                                                                Database.getData(
+                                                                    uid:
+                                                                        userUID);
+                                                            userData.then(
+                                                              (DocumentSnapshot
+                                                                  docsnap) {
+                                                                if (docsnap
+                                                                    .exists) {
+                                                                  final updateUserData =
+                                                                      userDatabase(
+                                                                    userName: docsnap
+                                                                        .get(
+                                                                            'userName')
+                                                                        .toString(),
+                                                                    userEmail: docsnap
+                                                                        .get(
+                                                                            'userEmail')
+                                                                        .toString(),
+                                                                    userSubs:
+                                                                        '$sub_state,intermediates',
+                                                                    userPic: docsnap
+                                                                        .get(
+                                                                            'userPic')
+                                                                        .toString(),
+                                                                  );
+                                                                  Database.updateData(
+                                                                          user:
+                                                                              updateUserData,
+                                                                          uid:
+                                                                              userUID)
+                                                                      .whenComplete(
+                                                                          () {})
+                                                                      .then(
+                                                                    (value) {
+                                                                      if (mounted) {
+                                                                        setState(
+                                                                          () {
+                                                                            getUserData();
+                                                                          },
+                                                                        );
+                                                                      }
+                                                                    },
+                                                                  );
+                                                                }
+                                                              },
+                                                            );
+
+                                                            Navigator.pop(
+                                                                context, 'Buy');
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                    "Thank you for buying Intermediate Subscription (\$39.99)"),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Text("Buy"),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ).then(
+                                                    (value) {
+                                                      if (mounted) {
+                                                        setState(
+                                                          () {
+                                                            getUserData();
+                                                          },
+                                                        );
+                                                      }
+                                                    },
+                                                  );
+                                                },
+                                                child: Icon(
+                                                  Icons
+                                                      .currency_exchange_rounded,
+                                                  size: 25,
+                                                ),
+                                                padding: EdgeInsets.all(15.0),
+                                                shape: CircleBorder(),
+                                                fillColor:
+                                                    Colors.lightBlueAccent,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        //TODO: Advanced
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Visibility(
+                            visible: cek_sub.contains('advanceds') ? false : true,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Color.fromARGB(255, 212, 195, 42),
+                              ),
+                              width: width_halaman,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                    child: Text(
+                                      "Advanced",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: width_halaman,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      ),
+                                      color: Colors.white,
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                0, 0, 0, 16),
+                                            child: Text(
+                                                "In this subcription plan, you will get advanced class video tutorials."),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 10, 0, 10),
+                                            child: Container(
+                                              alignment: Alignment.centerRight,
+                                              child: RawMaterialButton(
+                                                onPressed: () {
+                                                  showDialog<String>(
+                                                    context: context,
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        AlertDialog(
+                                                      title: Text(
+                                                        "Advanced Subscription",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      content: Text(
+                                                          "Would you like to buy Advanced Subscription for \$49.99 ?"),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context,
+                                                                'Cancel');
+                                                          },
+                                                          child: Text("Cancel"),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            final userUID =
+                                                                FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid;
+
+                                                            final userData =
+                                                                Database.getData(
+                                                                    uid:
+                                                                        userUID);
+                                                            userData.then(
+                                                              (DocumentSnapshot
+                                                                  docsnap) {
+                                                                if (docsnap
+                                                                    .exists) {
+                                                                  final updateUserData =
+                                                                      userDatabase(
+                                                                    userName: docsnap
+                                                                        .get(
+                                                                            'userName')
+                                                                        .toString(),
+                                                                    userEmail: docsnap
+                                                                        .get(
+                                                                            'userEmail')
+                                                                        .toString(),
+                                                                    userSubs:
+                                                                        '$sub_state,advanceds',
+                                                                    userPic: docsnap
+                                                                        .get(
+                                                                            'userPic')
+                                                                        .toString(),
+                                                                  );
+                                                                  Database.updateData(
+                                                                          user:
+                                                                              updateUserData,
+                                                                          uid:
+                                                                              userUID)
+                                                                      .whenComplete(
+                                                                          () {})
+                                                                      .then(
+                                                                    (value) {
+                                                                      if (mounted) {
+                                                                        setState(
+                                                                          () {
+                                                                            getUserData();
+                                                                          },
+                                                                        );
+                                                                      }
+                                                                    },
+                                                                  );
+                                                                }
+                                                              },
+                                                            );
+
+                                                            Navigator.pop(
+                                                                context, 'Buy');
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                    "Thank you for buying Advanced Subscription (\$49.99)"),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Text("Buy"),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ).then(
+                                                    (value) {
+                                                      if (mounted) {
+                                                        setState(
+                                                          () {
+                                                            getUserData();
+                                                          },
+                                                        );
+                                                      }
+                                                    },
+                                                  );
+                                                },
+                                                child: Icon(
+                                                  Icons
+                                                      .currency_exchange_rounded,
+                                                  size: 25,
+                                                ),
+                                                padding: EdgeInsets.all(15.0),
+                                                shape: CircleBorder(),
+                                                fillColor: Color.fromARGB(
+                                                    255, 212, 195, 42),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ),
             ),
-          ),
+
+            //TODO: HAL BEGINNER
+            cek_sub.isNotEmpty && cek_sub.contains('beginners')
+                ? Expanded(
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: Data(_colRefContentSubs, 'beginners'),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Text('Error');
+                        } else if (snapshot.hasData || snapshot.data != null) {
+                          return Expanded(
+                            child: ListView.separated(
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                DocumentSnapshot contentDs =
+                                    snapshot.data!.docs[index];
+                                return YtDisplay(ytid: contentDs);
+                              },
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const Divider(),
+                            ),
+                          );
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white70,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      "Belum Subscribe Beginner",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+
+            //TODO: HAL INTERMEDIATE
+            cek_sub.isNotEmpty && cek_sub.contains('intermediates')
+                ? Expanded(
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: Data(_colRefContentSubs, 'intermediates'),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Text('Error');
+                        } else if (snapshot.hasData || snapshot.data != null) {
+                          return Expanded(
+                            child: ListView.separated(
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                DocumentSnapshot contentDs =
+                                    snapshot.data!.docs[index];
+                                return YtDisplay(ytid: contentDs);
+                              },
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const Divider(),
+                            ),
+                          );
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white70,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      "Belum Subscribe Intermediate",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+
+            //TODO: HAL ADVANCED
+            cek_sub.isNotEmpty && cek_sub.contains('advanceds')
+                ? Expanded(
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: Data(_colRefContentSubs, 'advanceds'),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Text('Error');
+                        } else if (snapshot.hasData || snapshot.data != null) {
+                          return Expanded(
+                            child: ListView.separated(
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                DocumentSnapshot contentDs =
+                                    snapshot.data!.docs[index];
+                                return YtDisplay(ytid: contentDs);
+                              },
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const Divider(),
+                            ),
+                          );
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white70,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      "Belum Subscribe Advanced",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+          ],
         ),
       ),
     );
