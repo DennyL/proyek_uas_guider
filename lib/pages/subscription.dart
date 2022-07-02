@@ -16,7 +16,8 @@ class Subscription extends StatefulWidget {
 }
 
 class _SubscriptionState extends State<Subscription> {
-  late final CollectionReference _colRefContentSubs;
+  final CollectionReference _colRefContentSubs =
+      FirebaseFirestore.instance.collection('contents');
   String sub_state = '';
   List<String> cek_sub = [];
 
@@ -63,13 +64,7 @@ class _SubscriptionState extends State<Subscription> {
             setState(
               () {
                 sub_state = docsnap.get('userSubs');
-                if (sub_state != '') {
-                  filterIsiSubscriptionDatabase();
-                  _colRefContentSubs =
-                      FirebaseFirestore.instance.collection('contents');
-                } else {
-                  sub_state = '';
-                }
+                filterIsiSubscriptionDatabase();
               },
             );
           }
@@ -82,29 +77,11 @@ class _SubscriptionState extends State<Subscription> {
 
   Stream<QuerySnapshot<Object?>> Data(
       CollectionReference<Object?> colRefContentSubs, String Path) {
-    if (mounted) {
-      setState(() {});
-    }
+    setState(() {});
     return Database.getContent(
-        colRefContentSubs.doc('subscriptions').collection(Path));
+      colRefContentSubs.doc('subscriptions').collection(Path),
+    );
   }
-
-  // cekTampilkanWidgetSub(string_subs) {
-  //   if (cek_sub.isEmpty) {
-  //     print('isEmpty');
-  //     return true;
-  //   } else {
-  //     for (int i = 0; i < cek_sub.length; i++) {
-  //       if (cek_sub[i] == string_subs) {
-  //         print('fals not emp');
-  //         return false;
-  //       } else {
-  //         print('fals not emp');
-  //         return true;
-  //       }
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -119,548 +96,566 @@ class _SubscriptionState extends State<Subscription> {
         child: PageView(
           children: [
             //TODO: NON SUB
-            SingleChildScrollView(
-              child: Expanded(
-                child: Container(
-                    padding: EdgeInsets.all(8),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Visibility(
-                            visible: cek_sub.contains('beginners') ? false : true,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.green,
-                              ),
-                              width: width_halaman,
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                                    child: Text(
-                                      "Beginner",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
+            cek_sub.length < 3
+                ? SingleChildScrollView(
+                    child: Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Visibility(
+                                visible: cek_sub.contains('beginners')
+                                    ? false
+                                    : true,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.green,
                                   ),
-                                  Container(
-                                    width: width_halaman,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                      ),
-                                      color: Colors.white,
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Column(
-                                        children: [
-                                          Padding(
-                                            padding:
-                                                EdgeInsets.fromLTRB(0, 0, 0, 16),
-                                            child: Text(
-                                                "In this subcription plan, you will get beginner class video tutorials."),
+                                  width: width_halaman,
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 10, 0, 10),
+                                        child: Text(
+                                          "Beginner",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: Colors.white,
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 10, 0, 10),
-                                            child: Container(
-                                              alignment: Alignment.centerRight,
-                                              child: RawMaterialButton(
-                                                onPressed: () {
-                                                  showDialog<String>(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) =>
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      Container(
+                                        width: width_halaman,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                            bottomLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(10),
+                                          ),
+                                          color: Colors.white,
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    0, 0, 0, 16),
+                                                child: Text(
+                                                    "In this subcription plan, you will get beginner class video tutorials."),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        0, 10, 0, 10),
+                                                child: Container(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: RawMaterialButton(
+                                                    onPressed: () {
+                                                      showDialog<String>(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                                context) =>
                                                             AlertDialog(
-                                                      title: Text(
-                                                        "Beginner Subscription",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold),
-                                                      ),
-                                                      content: Text(
-                                                          "Would you like to buy Beginner Subscription for \$29.99 ?"),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(context,
-                                                                'Cancel');
-                                                          },
-                                                          child: Text("Cancel"),
+                                                          title: Text(
+                                                            "Beginner Subscription",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          content: Text(
+                                                              "Would you like to buy Beginner Subscription for \$29.99 ?"),
+                                                          actions: <Widget>[
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    'Cancel');
+                                                              },
+                                                              child: Text(
+                                                                  "Cancel"),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                final userUID =
+                                                                    FirebaseAuth
+                                                                        .instance
+                                                                        .currentUser!
+                                                                        .uid;
+
+                                                                final userData =
+                                                                    Database.getData(
+                                                                        uid:
+                                                                            userUID);
+                                                                userData.then(
+                                                                  (DocumentSnapshot
+                                                                      docsnap) {
+                                                                    if (docsnap
+                                                                        .exists) {
+                                                                      final updateUserData =
+                                                                          userDatabase(
+                                                                        userName: docsnap
+                                                                            .get('userName')
+                                                                            .toString(),
+                                                                        userEmail: docsnap
+                                                                            .get('userEmail')
+                                                                            .toString(),
+                                                                        userSubs:
+                                                                            '$sub_state,beginners',
+                                                                        userPic: docsnap
+                                                                            .get('userPic')
+                                                                            .toString(),
+                                                                      );
+                                                                      Database.updateData(
+                                                                              user: updateUserData,
+                                                                              uid: userUID)
+                                                                          .whenComplete(() {})
+                                                                          .then(
+                                                                        (value) {
+                                                                          if (mounted) {
+                                                                            setState(
+                                                                              () {
+                                                                                getUserData();
+                                                                              },
+                                                                            );
+                                                                          }
+                                                                        },
+                                                                      );
+                                                                    }
+                                                                  },
+                                                                );
+
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    'Buy');
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                  SnackBar(
+                                                                    content: Text(
+                                                                        "Thank you for buying Beginner Subscription (\$29.99)"),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              child:
+                                                                  Text("Buy"),
+                                                            ),
+                                                          ],
                                                         ),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            final userUID =
-                                                                FirebaseAuth
-                                                                    .instance
-                                                                    .currentUser!
-                                                                    .uid;
-                          
-                                                            final userData =
-                                                                Database.getData(
-                                                                    uid: userUID);
-                                                            userData.then(
-                                                              (DocumentSnapshot
-                                                                  docsnap) {
-                                                                if (docsnap
-                                                                    .exists) {
-                                                                  final updateUserData =
-                                                                      userDatabase(
-                                                                    userName: docsnap
-                                                                        .get(
-                                                                            'userName')
-                                                                        .toString(),
-                                                                    userEmail: docsnap
-                                                                        .get(
-                                                                            'userEmail')
-                                                                        .toString(),
-                                                                    userSubs:
-                                                                        '$sub_state,beginners',
-                                                                    userPic: docsnap
-                                                                        .get(
-                                                                            'userPic')
-                                                                        .toString(),
-                                                                  );
-                                                                  Database.updateData(
-                                                                          user:
-                                                                              updateUserData,
-                                                                          uid:
-                                                                              userUID)
-                                                                      .whenComplete(
-                                                                          () {})
-                                                                      .then(
-                                                                    (value) {
-                                                                      if (mounted) {
-                                                                        setState(
-                                                                          () {
-                                                                            getUserData();
-                                                                          },
-                                                                        );
-                                                                      }
-                                                                    },
-                                                                  );
-                                                                }
+                                                      ).then(
+                                                        (value) {
+                                                          if (mounted) {
+                                                            setState(
+                                                              () {
+                                                                getUserData();
                                                               },
                                                             );
-                          
-                                                            Navigator.pop(
-                                                                context, 'Buy');
-                                                            ScaffoldMessenger.of(
-                                                                    context)
-                                                                .showSnackBar(
-                                                              SnackBar(
-                                                                content: Text(
-                                                                    "Thank you for buying Beginner Subscription (\$29.99)"),
-                                                              ),
-                                                            );
-                                                          },
-                                                          child: Text("Buy"),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ).then(
-                                                    (value) {
-                                                      if (mounted) {
-                                                        setState(
-                                                          () {
-                                                            getUserData();
-                                                          },
-                                                        );
-                                                      }
+                                                          }
+                                                        },
+                                                      );
                                                     },
-                                                  );
-                                                },
-                                                child: Icon(
-                                                  Icons.currency_exchange_rounded,
-                                                  size: 25,
+                                                    child: Icon(
+                                                      Icons
+                                                          .currency_exchange_rounded,
+                                                      size: 25,
+                                                    ),
+                                                    padding:
+                                                        EdgeInsets.all(15.0),
+                                                    shape: CircleBorder(),
+                                                    fillColor: Colors.green,
+                                                  ),
                                                 ),
-                                                padding: EdgeInsets.all(15.0),
-                                                shape: CircleBorder(),
-                                                fillColor: Colors.green,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        //TODO: Intermediates
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Visibility(
-                            visible: cek_sub.contains('intermediates') ? false : true,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.lightBlueAccent,
-                              ),
-                              width: width_halaman,
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                                    child: Text(
-                                      "Intermediate",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: width_halaman,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                      ),
-                                      color: Colors.white,
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Column(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                0, 0, 0, 16),
-                                            child: Text(
-                                                "In this subcription plan, you will get intermediate class video tutorials."),
+                                              )
+                                            ],
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 10, 0, 10),
-                                            child: Container(
-                                              alignment: Alignment.centerRight,
-                                              child: RawMaterialButton(
-                                                onPressed: () {
-                                                  showDialog<String>(
-                                                    context: context,
-                                                    builder: (BuildContext
-                                                            context) =>
-                                                        AlertDialog(
-                                                      title: Text(
-                                                        "Intermediate Subscription",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      content: Text(
-                                                          "Would you like to buy Intermediate Subscription for \$39.99 ?"),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context,
-                                                                'Cancel');
-                                                          },
-                                                          child: Text("Cancel"),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            final userUID =
-                                                                FirebaseAuth
-                                                                    .instance
-                                                                    .currentUser!
-                                                                    .uid;
-
-                                                            final userData =
-                                                                Database.getData(
-                                                                    uid:
-                                                                        userUID);
-                                                            userData.then(
-                                                              (DocumentSnapshot
-                                                                  docsnap) {
-                                                                if (docsnap
-                                                                    .exists) {
-                                                                  final updateUserData =
-                                                                      userDatabase(
-                                                                    userName: docsnap
-                                                                        .get(
-                                                                            'userName')
-                                                                        .toString(),
-                                                                    userEmail: docsnap
-                                                                        .get(
-                                                                            'userEmail')
-                                                                        .toString(),
-                                                                    userSubs:
-                                                                        '$sub_state,intermediates',
-                                                                    userPic: docsnap
-                                                                        .get(
-                                                                            'userPic')
-                                                                        .toString(),
-                                                                  );
-                                                                  Database.updateData(
-                                                                          user:
-                                                                              updateUserData,
-                                                                          uid:
-                                                                              userUID)
-                                                                      .whenComplete(
-                                                                          () {})
-                                                                      .then(
-                                                                    (value) {
-                                                                      if (mounted) {
-                                                                        setState(
-                                                                          () {
-                                                                            getUserData();
-                                                                          },
-                                                                        );
-                                                                      }
-                                                                    },
-                                                                  );
-                                                                }
-                                                              },
-                                                            );
-
-                                                            Navigator.pop(
-                                                                context, 'Buy');
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                              SnackBar(
-                                                                content: Text(
-                                                                    "Thank you for buying Intermediate Subscription (\$39.99)"),
-                                                              ),
-                                                            );
-                                                          },
-                                                          child: Text("Buy"),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ).then(
-                                                    (value) {
-                                                      if (mounted) {
-                                                        setState(
-                                                          () {
-                                                            getUserData();
-                                                          },
-                                                        );
-                                                      }
-                                                    },
-                                                  );
-                                                },
-                                                child: Icon(
-                                                  Icons
-                                                      .currency_exchange_rounded,
-                                                  size: 25,
-                                                ),
-                                                padding: EdgeInsets.all(15.0),
-                                                shape: CircleBorder(),
-                                                fillColor:
-                                                    Colors.lightBlueAccent,
-                                              ),
-                                            ),
-                                          )
-                                        ],
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        //TODO: Advanced
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Visibility(
-                            visible: cek_sub.contains('advanceds') ? false : true,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Color.fromARGB(255, 212, 195, 42),
-                              ),
-                              width: width_halaman,
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                                    child: Text(
-                                      "Advanced",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
+                            //TODO: Intermediates
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Visibility(
+                                visible: cek_sub.contains('intermediates')
+                                    ? false
+                                    : true,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.lightBlueAccent,
                                   ),
-                                  Container(
-                                    width: width_halaman,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                      ),
-                                      color: Colors.white,
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Column(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                0, 0, 0, 16),
-                                            child: Text(
-                                                "In this subcription plan, you will get advanced class video tutorials."),
+                                  width: width_halaman,
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 10, 0, 10),
+                                        child: Text(
+                                          "Intermediate",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: Colors.white,
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 10, 0, 10),
-                                            child: Container(
-                                              alignment: Alignment.centerRight,
-                                              child: RawMaterialButton(
-                                                onPressed: () {
-                                                  showDialog<String>(
-                                                    context: context,
-                                                    builder: (BuildContext
-                                                            context) =>
-                                                        AlertDialog(
-                                                      title: Text(
-                                                        "Advanced Subscription",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      content: Text(
-                                                          "Would you like to buy Advanced Subscription for \$49.99 ?"),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context,
-                                                                'Cancel');
-                                                          },
-                                                          child: Text("Cancel"),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            final userUID =
-                                                                FirebaseAuth
-                                                                    .instance
-                                                                    .currentUser!
-                                                                    .uid;
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      Container(
+                                        width: width_halaman,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                            bottomLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(10),
+                                          ),
+                                          color: Colors.white,
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    0, 0, 0, 16),
+                                                child: Text(
+                                                    "In this subcription plan, you will get intermediate class video tutorials."),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        0, 10, 0, 10),
+                                                child: Container(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: RawMaterialButton(
+                                                    onPressed: () {
+                                                      showDialog<String>(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            AlertDialog(
+                                                          title: Text(
+                                                            "Intermediate Subscription",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          content: Text(
+                                                              "Would you like to buy Intermediate Subscription for \$39.99 ?"),
+                                                          actions: <Widget>[
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    'Cancel');
+                                                              },
+                                                              child: Text(
+                                                                  "Cancel"),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                final userUID =
+                                                                    FirebaseAuth
+                                                                        .instance
+                                                                        .currentUser!
+                                                                        .uid;
 
-                                                            final userData =
-                                                                Database.getData(
-                                                                    uid:
-                                                                        userUID);
-                                                            userData.then(
-                                                              (DocumentSnapshot
-                                                                  docsnap) {
-                                                                if (docsnap
-                                                                    .exists) {
-                                                                  final updateUserData =
-                                                                      userDatabase(
-                                                                    userName: docsnap
-                                                                        .get(
-                                                                            'userName')
-                                                                        .toString(),
-                                                                    userEmail: docsnap
-                                                                        .get(
-                                                                            'userEmail')
-                                                                        .toString(),
-                                                                    userSubs:
-                                                                        '$sub_state,advanceds',
-                                                                    userPic: docsnap
-                                                                        .get(
-                                                                            'userPic')
-                                                                        .toString(),
-                                                                  );
-                                                                  Database.updateData(
-                                                                          user:
-                                                                              updateUserData,
-                                                                          uid:
-                                                                              userUID)
-                                                                      .whenComplete(
-                                                                          () {})
-                                                                      .then(
-                                                                    (value) {
-                                                                      if (mounted) {
-                                                                        setState(
-                                                                          () {
-                                                                            getUserData();
-                                                                          },
-                                                                        );
-                                                                      }
-                                                                    },
-                                                                  );
-                                                                }
+                                                                final userData =
+                                                                    Database.getData(
+                                                                        uid:
+                                                                            userUID);
+                                                                userData.then(
+                                                                  (DocumentSnapshot
+                                                                      docsnap) {
+                                                                    if (docsnap
+                                                                        .exists) {
+                                                                      final updateUserData =
+                                                                          userDatabase(
+                                                                        userName: docsnap
+                                                                            .get('userName')
+                                                                            .toString(),
+                                                                        userEmail: docsnap
+                                                                            .get('userEmail')
+                                                                            .toString(),
+                                                                        userSubs:
+                                                                            '$sub_state,intermediates',
+                                                                        userPic: docsnap
+                                                                            .get('userPic')
+                                                                            .toString(),
+                                                                      );
+                                                                      Database.updateData(
+                                                                              user: updateUserData,
+                                                                              uid: userUID)
+                                                                          .whenComplete(() {})
+                                                                          .then(
+                                                                        (value) {
+                                                                          if (mounted) {
+                                                                            setState(
+                                                                              () {
+                                                                                getUserData();
+                                                                              },
+                                                                            );
+                                                                          }
+                                                                        },
+                                                                      );
+                                                                    }
+                                                                  },
+                                                                );
+
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    'Buy');
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                  SnackBar(
+                                                                    content: Text(
+                                                                        "Thank you for buying Intermediate Subscription (\$39.99)"),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              child:
+                                                                  Text("Buy"),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ).then(
+                                                        (value) {
+                                                          if (mounted) {
+                                                            setState(
+                                                              () {
+                                                                getUserData();
                                                               },
                                                             );
-
-                                                            Navigator.pop(
-                                                                context, 'Buy');
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                              SnackBar(
-                                                                content: Text(
-                                                                    "Thank you for buying Advanced Subscription (\$49.99)"),
-                                                              ),
-                                                            );
-                                                          },
-                                                          child: Text("Buy"),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ).then(
-                                                    (value) {
-                                                      if (mounted) {
-                                                        setState(
-                                                          () {
-                                                            getUserData();
-                                                          },
-                                                        );
-                                                      }
+                                                          }
+                                                        },
+                                                      );
                                                     },
-                                                  );
-                                                },
-                                                child: Icon(
-                                                  Icons
-                                                      .currency_exchange_rounded,
-                                                  size: 25,
+                                                    child: Icon(
+                                                      Icons
+                                                          .currency_exchange_rounded,
+                                                      size: 25,
+                                                    ),
+                                                    padding:
+                                                        EdgeInsets.all(15.0),
+                                                    shape: CircleBorder(),
+                                                    fillColor:
+                                                        Colors.lightBlueAccent,
+                                                  ),
                                                 ),
-                                                padding: EdgeInsets.all(15.0),
-                                                shape: CircleBorder(),
-                                                fillColor: Color.fromARGB(
-                                                    255, 212, 195, 42),
-                                              ),
-                                            ),
-                                          )
-                                        ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
+                            //TODO: Advanced
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Visibility(
+                                visible: cek_sub.contains('advanceds')
+                                    ? false
+                                    : true,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color.fromARGB(255, 212, 195, 42),
+                                  ),
+                                  width: width_halaman,
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 10, 0, 10),
+                                        child: Text(
+                                          "Advanced",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      Container(
+                                        width: width_halaman,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                            bottomLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(10),
+                                          ),
+                                          color: Colors.white,
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    0, 0, 0, 16),
+                                                child: Text(
+                                                    "In this subcription plan, you will get advanced class video tutorials."),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        0, 10, 0, 10),
+                                                child: Container(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: RawMaterialButton(
+                                                    onPressed: () {
+                                                      showDialog<String>(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            AlertDialog(
+                                                          title: Text(
+                                                            "Advanced Subscription",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          content: Text(
+                                                              "Would you like to buy Advanced Subscription for \$49.99 ?"),
+                                                          actions: <Widget>[
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    'Cancel');
+                                                              },
+                                                              child: Text(
+                                                                  "Cancel"),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                final userUID =
+                                                                    FirebaseAuth
+                                                                        .instance
+                                                                        .currentUser!
+                                                                        .uid;
+
+                                                                final userData =
+                                                                    Database.getData(
+                                                                        uid:
+                                                                            userUID);
+                                                                userData.then(
+                                                                  (DocumentSnapshot
+                                                                      docsnap) {
+                                                                    if (docsnap
+                                                                        .exists) {
+                                                                      final updateUserData =
+                                                                          userDatabase(
+                                                                        userName: docsnap
+                                                                            .get('userName')
+                                                                            .toString(),
+                                                                        userEmail: docsnap
+                                                                            .get('userEmail')
+                                                                            .toString(),
+                                                                        userSubs:
+                                                                            '$sub_state,advanceds',
+                                                                        userPic: docsnap
+                                                                            .get('userPic')
+                                                                            .toString(),
+                                                                      );
+                                                                      Database.updateData(
+                                                                              user: updateUserData,
+                                                                              uid: userUID)
+                                                                          .whenComplete(() {})
+                                                                          .then(
+                                                                        (value) {
+                                                                          if (mounted) {
+                                                                            setState(
+                                                                              () {
+                                                                                getUserData();
+                                                                              },
+                                                                            );
+                                                                          }
+                                                                        },
+                                                                      );
+                                                                    }
+                                                                  },
+                                                                );
+
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    'Buy');
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                  SnackBar(
+                                                                    content: Text(
+                                                                        "Thank you for buying Advanced Subscription (\$49.99)"),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              child:
+                                                                  Text("Buy"),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ).then(
+                                                        (value) {
+                                                          if (mounted) {
+                                                            setState(
+                                                              () {
+                                                                getUserData();
+                                                              },
+                                                            );
+                                                          }
+                                                        },
+                                                      );
+                                                    },
+                                                    child: Icon(
+                                                      Icons
+                                                          .currency_exchange_rounded,
+                                                      size: 25,
+                                                    ),
+                                                    padding:
+                                                        EdgeInsets.all(15.0),
+                                                    shape: CircleBorder(),
+                                                    fillColor: Color.fromARGB(
+                                                        255, 212, 195, 42),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      "Thanks For Buying Our Subscription",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ),
-              ),
-            ),
 
             //TODO: HAL BEGINNER
             cek_sub.isNotEmpty && cek_sub.contains('beginners')
@@ -677,7 +672,11 @@ class _SubscriptionState extends State<Subscription> {
                               itemBuilder: (context, index) {
                                 DocumentSnapshot contentDs =
                                     snapshot.data!.docs[index];
-                                return YtDisplay(ytid: contentDs);
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  child: YtDisplay(ytid: contentDs),
+                                );
                               },
                               separatorBuilder:
                                   (BuildContext context, int index) =>
@@ -718,7 +717,11 @@ class _SubscriptionState extends State<Subscription> {
                               itemBuilder: (context, index) {
                                 DocumentSnapshot contentDs =
                                     snapshot.data!.docs[index];
-                                return YtDisplay(ytid: contentDs);
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  child: YtDisplay(ytid: contentDs),
+                                );
                               },
                               separatorBuilder:
                                   (BuildContext context, int index) =>
@@ -759,7 +762,11 @@ class _SubscriptionState extends State<Subscription> {
                               itemBuilder: (context, index) {
                                 DocumentSnapshot contentDs =
                                     snapshot.data!.docs[index];
-                                return YtDisplay(ytid: contentDs);
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  child: YtDisplay(ytid: contentDs),
+                                );
                               },
                               separatorBuilder:
                                   (BuildContext context, int index) =>
