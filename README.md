@@ -1,5 +1,21 @@
 # proyek_uas_guider
- Guider UAS
+ Proyek AMBW ~ Guider
+ 
+ Pembagian : 
+ 1. Denny Lianto / C14190004 
+  - Home
+  - Profile
+  - Fitur Tambahan (History + Subscription)
+
+ 2. Jason William WIjaya / C14190030
+  - Login/Regis
+  - Subscription
+  - Fitur Tambahan (History + Subscription)
+
+3. Ivan Gunawan / C14190026
+  - Search
+  - 
+  - Fitur Tambahan (History + Subscription)
 
 
 Referensi : 
