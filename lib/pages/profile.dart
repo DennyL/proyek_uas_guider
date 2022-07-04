@@ -32,26 +32,36 @@ class _ProfileState extends State<Profile> {
     ),
   );
 
+  String sub_state = '';
+  List<String> cek_sub = [];
+
   void getUserData() {
     final userUID = FirebaseAuth.instance.currentUser!.uid;
     final userData = Database.getData(uid: userUID);
-    userData.then((DocumentSnapshot docSnap) {
-      if (docSnap.exists) {
-        _controllerName.text = docSnap.get('userName').toString();
-        _controllerEmail.text = docSnap.get('userEmail').toString();
-        _controllerSubs.text = docSnap.get('userSubs').toString();
-        if (_controllerSubs.text == '') {
-          _controllerSubs.text = 'No Subs';
+    userData.then(
+      (DocumentSnapshot docSnap) {
+        if (docSnap.exists) {
+          String temp = '';
+          sub_state = docSnap.get('userSubs').toString();
+          filterIsiSubscriptionDatabase();
+          _controllerName.text = docSnap.get('userName').toString();
+          _controllerEmail.text = docSnap.get('userEmail').toString();
+          for(int i=1;i<sub_state.length;i++) {
+            temp = temp + sub_state[i];
+          }_controllerSubs.text = temp;
+          if (_controllerSubs.text == '') {
+            _controllerSubs.text = 'No Subs';
+          }
+          if (mounted) {
+            setState(() {
+              _tempImg = docSnap.get('userPic').toString();
+            });
+          }
+        } else {
+          print('Not Found');
         }
-        if (mounted) {
-          setState(() {
-            _tempImg = docSnap.get('userPic').toString();
-          });
-        }
-      } else {
-        print('Not Found');
-      }
-    });
+      },
+    );
   }
 
   Future getImage() async {
@@ -113,6 +123,23 @@ class _ProfileState extends State<Profile> {
     // TODO: implement initState
 
     super.initState();
+  }
+
+  void filterIsiSubscriptionDatabase() {
+    String temp = "";
+    cek_sub = [];
+
+    for (int i = 1; i < sub_state.length; i++) {
+      if (sub_state[i] != ',') {
+        temp = temp + sub_state[i];
+      } else {
+        cek_sub.add(temp);
+        temp = "";
+      }
+      if (i == (sub_state.length) - 1) {
+        cek_sub.add(temp);
+      }
+    }
   }
 
   @override

@@ -45,15 +45,6 @@ class _HomeState extends State<Home> {
     // print('HIIIIIIIIIIIII $Data()');
     return Scaffold(
       backgroundColor: Color(0xFF171717),
-      appBar: AppBar(
-        title: Text(
-          'Basic Tutorial',
-          style: TextStyle(fontSize: 25),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: SafeArea(
         child: Expanded(
           child: Container(
@@ -62,6 +53,19 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+                Text(
+                  'Basic Tutorial',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold),
+                ),
+
+                SizedBox(
+                  height: 25,
                   width: MediaQuery.of(context).size.width,
                   child: Divider(
                     height: 2,

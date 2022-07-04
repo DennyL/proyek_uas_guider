@@ -1,5 +1,27 @@
 # proyek_uas_guider
- Guider UAS
+ Proyek AMBW ~ Guider
+ 
+ Pembagian : 
+ 1. Denny Lianto / C14190004 
+  - Home
+  - Profile
+  - Fitur Tambahan (History + Subscription)
+
+ 2. Jason William WIjaya / C14190030
+  - Login/Regis
+  - Subscription
+  - Fitur Tambahan (History + Subscription)
+
+3. Ivan Gunawan / C14190026
+  - Search
+  - 
+  - Fitur Tambahan (History + Subscription)
+
+
+Link : 
+1. Firebase : https://console.firebase.google.com/u/1/project/guider-app-e89dc
+
+2. Drive Demo : https://drive.google.com/drive/folders/1BIs4nX0cIlxMFHaS8pYGVK0QmcKIyV2S?usp=sharing
 
 Firebase : https://console.firebase.google.com/u/1/project/guider-app-e89dc
 
