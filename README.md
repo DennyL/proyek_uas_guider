@@ -23,9 +23,6 @@ Link :
 
 2. Drive Demo : https://drive.google.com/drive/folders/1BIs4nX0cIlxMFHaS8pYGVK0QmcKIyV2S?usp=sharing
 
-Firebase : https://console.firebase.google.com/u/1/project/guider-app-e89dc
-
-Drive Demo : https://drive.google.com/drive/folders/1BIs4nX0cIlxMFHaS8pYGVK0QmcKIyV2S?usp=sharing
 
 Referensi : 
 1. Global Bottom Navigation : https://flutterhq.com/questions-and-answers/1490/how-to-keep-bottom-navigation-bar-in-all-pages-with-stateful-widget-in-flutter
